@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main">
+    <div class="main_item">
+        <table>
+            <h1>Пустые корзины</h1>
+
+            <th>ID Заявки</th><th>Оформитель</th><th>ID транзакции</th><th>Дата оформления</th>
+            {% for row in empty_requests %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="main_item">
+        <h1>Заявки</h1>
+        {% set count = namespace(a=-1) %}
+        <div>
+        {% for row in requests %}
+            {% if count.a == row[0] %}
+                <tr><td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td></tr>
+            {% else %}
+                </div>
+                </table>
+                {% set count.a = row[0] %}
+                <p></p>
+                <hr align="center" size="4" color="#ff0000" />
+                <div>
+                <h2>ID Заявки: {{ row[0] }}</h2> <h2>Полная стоймость: {{ row[8] }}</h2>
+                <table>
+                <th>Наименование детали</th><th>Тип детали</th><th>Поставщик</th><th>Наличие гарантии</th>
+                <th>Цена (шт.)</th><th>Кол-во в заказе</th><th>Цена * Кол-во</th>
+                <tr><td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td></tr>
+            {% endif %}
+        {% endfor %}
+            </div>
+    </div>
+</div>
+{% endblock %}

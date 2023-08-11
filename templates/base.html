@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин</title>
+    <link href="../static/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+
+{% for message in get_flashed_messages(category_filter=["message"]) %}
+    <div class="alert">{{ message }}</div>
+{% endfor %}
+{% for success in get_flashed_messages(category_filter=["success"]) %}
+            <div class="success">{{ success }}</div>
+{% endfor %}
+<div class="main">
+    <div class="main_item">
+        {% block content %} {% endblock %}
+    </div>
+</div>
+</body>
+</html>

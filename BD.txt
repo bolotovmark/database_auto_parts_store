@@ -1,0 +1,255 @@
+------------------------------------------------------------------------------------
+--TABLE покупатели
+CREATE TABLE "customers" (
+  "login" text UNIQUE PRIMARY KEY NOT NULL,
+  "first" text,
+  "last" text
+);
+--GRANT
+ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+    --GRANT USER
+      GRANT SELECT (login, first, last) ON customers TO "user";
+      GRANT UPDATE (first, last) ON customers TO "user";
+      CREATE POLICY select_self_customers ON customers
+        FOR SELECT
+        TO "user"
+        USING (login = current_user::text);
+      CREATE POLICY update_self_customers ON customers
+        FOR UPDATE
+        TO "user"
+        USING (login = current_user::text);
+
+    --GRANT MANAGER
+      GRANT SELECT (login, first, last) ON customers TO "group_manager";
+
+    --GRANT ADMIN
+      GRANT SELECT, INSERT, UPDATE, DELETE ON customers TO "group_admin";
+
+------------------------------------------------------------------------------------
+--TABLE покупатель-заказ
+CREATE TABLE "orders_customers" (
+  "id_order_customer" SERIAL PRIMARY KEY NOT NULL,
+  "customer_login" text NOT NULL,
+  "transaction" int NOT NULL
+);
+--GRANT
+ALTER TABLE orders_customers ENABLE ROW LEVEL SECURITY;
+    --GRANT USER
+      GRANT SELECT (id_order_customer, transaction) ON orders_customers TO "user";
+      CREATE POLICY select_self_customers_orders ON orders_customers
+        FOR SELECT
+        TO "user"
+        USING (customer_login = current_user::text);
+
+    --GRANT MANAGER
+      GRANT SELECT ON orders_customers TO "group_manager";
+    --GRANT ADMIN
+      GRANT SELECT, INSERT, UPDATE, DELETE ON orders_customers TO "group_admin";
+
+--REF
+    ALTER TABLE "orders_customers"
+        ADD FOREIGN KEY ("customer_login") REFERENCES "customers" ("login");
+    ALTER TABLE "orders_customers"
+        ADD FOREIGN KEY ("transaction") REFERENCES "money_transactions" ("id_transaction");
+
+------------------------------------------------------------------------------------
+--TABLE заказ-покупатель-продукт
+CREATE TABLE "orders_customers_products" (
+  "id_order_customer_product" SERIAL PRIMARY KEY NOT NULL,
+  "order_customer" int NOT NULL,
+  "product" int NOT NULL,
+  "in_time_price_product" money NOT NULL,
+  "count" int NOT NULL
+);
+--GRANT
+ALTER TABLE orders_customers_products ENABLE ROW LEVEL SECURITY;
+    --GRANT USER
+      GRANT SELECT (order_customer, product, in_time_price_product, count) ON orders_customers_products TO "user";
+      CREATE POLICY select_self_customers_orders_products ON orders_customers_products
+        FOR SELECT
+        TO "user"
+        USING (current_user::text ==
+                (SELECT orders_customers.customer_login FROM orders_customers
+                          JOIN orders_customers_products
+                              ON orders_customers_products.order_customer == orders_customers.id_order_customer)
+        );
+
+    --GRANT MANAGER
+      GRANT SELECT ON orders_customers_products TO "group_manager";
+    --GRANT ADMIN
+      GRANT SELECT, INSERT, UPDATE, DELETE ON orders_customers_products TO "group_admin";
+
+--REF
+    ALTER TABLE "orders_customers_products"
+        ADD FOREIGN KEY ("order_customer") REFERENCES "orders_customers" ("id_order_customer");
+    ALTER TABLE "orders_customers_products"
+        ADD FOREIGN KEY ("product") REFERENCES "products" ("id_product");
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE "products" (
+  "id_product" int PRIMARY KEY,
+  "machine_part" int,
+  --Для поставщика
+  "supplier" int,
+  "supplier_count_product" int,
+  "supplier_price_product" money,
+  --Для покупателя
+  "user_order_count_product" int,
+  "user_requests_count_product" int,
+  "user_prise_product" money
+);
+
+--REF
+    ALTER TABLE "products" 
+        ADD FOREIGN KEY ("machine_part") REFERENCES "machine_parts" ("id_machine_part");
+    ALTER TABLE "products"
+        ADD FOREIGN KEY ("supplier") REFERENCES "suppliers" ("id_supplier");
+
+------------------------------------------------------------------------------------
+--TABLE транзакции
+CREATE TABLE "money_transactions" (
+  "id_transaction" int PRIMARY KEY,
+  "character" int,
+  "status" int,
+  "amount" money
+);
+
+--TABLE характер операции
+CREATE TABLE "characters_operations" (
+  "id_character" int PRIMARY KEY,
+  "name_character" text
+);
+
+CREATE TABLE "statuses_operations" (
+  "id_status" int PRIMARY KEY,
+  "name_status" text
+);
+
+
+CREATE TABLE "requests_customers" (
+  "id_request_customer" int PRIMARY KEY,
+  "customer" int,
+  "transaction" int
+);
+
+CREATE TABLE "requests_customers_products" (
+  "id_request_customer_product" int PRIMARY KEY,
+  "request_customer" int,
+  "product" int
+);
+
+CREATE TABLE "defective_customers" (
+  "id_defective_customer" int PRIMARY KEY,
+  "customer" int,
+  "transaction" int
+);
+
+CREATE TABLE "defective_customers_products" (
+  "id_defective_customer_product" int PRIMARY KEY,
+  "defective_customer" int,
+  "product" int
+);
+
+CREATE TABLE "machine_parts" (
+  "id_machine_part" int PRIMARY KEY,
+  "name" text,
+  "type_machine_part" int
+);
+
+CREATE TABLE "types_machine_part" (
+  "id_type_machine_part" int PRIMARY KEY,
+  "name_type" text
+);
+
+CREATE TABLE "suppliers" (
+  "id_supplier" int PRIMARY KEY,
+  "name_sup" text,
+  "category" int
+);
+
+CREATE TABLE "categorys" (
+  "id_category" int PRIMARY KEY,
+  "name_category" text
+);
+
+CREATE TABLE "categorys_attributes" (
+  "id_category_attribute" int PRIMARY KEY,
+  "category" int,
+  "attribute" int
+);
+
+CREATE TABLE "attributes" (
+  "id_attribute" int PRIMARY KEY,
+  "name_attribute" text
+);
+
+CREATE TABLE "orders_store" (
+  "id_order_store" int PRIMARY KEY,
+  "order_manager" int,
+  "supplier" int,
+  "contract" int
+);
+
+CREATE TABLE "managers" (
+  "id_manager" int PRIMARY KEY,
+  "name" text
+);
+
+CREATE TABLE "orders_store_products" (
+  "id_order_store_product" int PRIMARY KEY,
+  "order_store" int,
+  "product_order" int
+);
+
+CREATE TABLE "contracts" (
+  "id_contract" int PRIMARY KEY,
+  "date_a" date,
+  "date_b" date
+);
+
+ALTER TABLE "money_transactions" ADD FOREIGN KEY ("character") REFERENCES "characters_operations" ("id_character");
+
+ALTER TABLE "money_transactions" ADD FOREIGN KEY ("status") REFERENCES "statuses_operations" ("id_status");
+
+
+
+
+
+ALTER TABLE "requests_customers" ADD FOREIGN KEY ("customer") REFERENCES "customers" ("id_customer");
+
+ALTER TABLE "requests_customers" ADD FOREIGN KEY ("transaction") REFERENCES "money_transactions" ("id_transaction");
+
+ALTER TABLE "requests_customers_products" ADD FOREIGN KEY ("request_customer") REFERENCES "requests_customers" ("id_request_customer");
+
+ALTER TABLE "requests_customers_products" ADD FOREIGN KEY ("product") REFERENCES "products" ("id_product");
+
+ALTER TABLE "defective_customers" ADD FOREIGN KEY ("customer") REFERENCES "customers" ("id_customer");
+
+ALTER TABLE "defective_customers" ADD FOREIGN KEY ("transaction") REFERENCES "money_transactions" ("id_transaction");
+
+ALTER TABLE "defective_customers_products" ADD FOREIGN KEY ("defective_customer") REFERENCES "defective_customers" ("id_defective_customer");
+
+ALTER TABLE "defective_customers_products" ADD FOREIGN KEY ("product") REFERENCES "products" ("id_product");
+
+ALTER TABLE "products" ADD FOREIGN KEY ("machine_part") REFERENCES "machine_parts" ("id_machine_part");
+
+ALTER TABLE "products" ADD FOREIGN KEY ("supplier") REFERENCES "suppliers" ("id_supplier");
+
+ALTER TABLE "machine_parts" ADD FOREIGN KEY ("type_machine_part") REFERENCES "types_machine_part" ("id_type_machine_part");
+
+ALTER TABLE "suppliers" ADD FOREIGN KEY ("category") REFERENCES "categorys" ("id_category");
+
+ALTER TABLE "categorys_attributes" ADD FOREIGN KEY ("category") REFERENCES "categorys" ("id_category");
+
+ALTER TABLE "categorys_attributes" ADD FOREIGN KEY ("attribute") REFERENCES "attributes" ("id_attribute");
+
+ALTER TABLE "orders_store" ADD FOREIGN KEY ("order_manager") REFERENCES "managers" ("id_manager");
+
+ALTER TABLE "orders_store" ADD FOREIGN KEY ("supplier") REFERENCES "suppliers" ("id_supplier");
+
+ALTER TABLE "orders_store" ADD FOREIGN KEY ("contract") REFERENCES "contracts" ("id_contract");
+
+ALTER TABLE "orders_store_products" ADD FOREIGN KEY ("order_store") REFERENCES "orders_store" ("id_order_store");
+
+ALTER TABLE "orders_store_products" ADD FOREIGN KEY ("product_order") REFERENCES "products" ("id_product");

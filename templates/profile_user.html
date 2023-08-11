@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>{% block title %} Profile {% endblock %}</h1>
+    {% for row in customer %}
+        <p><b>Login: </b>{{ row[0] }}</p>
+        <form method="post">
+        <p> <b>First Name: </b>{{ row[1] }} <input type="text" name="first"
+                   placeholder="change first name"
+                   value="{{ request.form['first'] }}">
+        <p> <b>Last Name: </b>{{ row[2] }} <input type="text" name="last"
+                   placeholder="change last name"
+                   value="{{ request.form['last'] }}">
+        <p> <button type="submit">Сохранить изменения</button>
+    </form>
+    {% endfor %}
+    <p><a href="{{ url_for('logout') }}" >Logout</a></p>
+    <h2><a href="{{ url_for('products') }}" >Ассортимент товаров</a></h2>
+    <div class="main">
+    <div class="main_item">
+        <table>
+            <h1>Заказы</h1>
+            <p><a href="{{ url_for('orders_user') }}" >Посмотреть полную информацию о заказах</a></p>
+            <p><a href="{{ url_for('create_order') }}">Добавить товары в заказ</a></p>
+            <th>ID Заказа</th><th>Оформитель</th><th>ID транзакции</th><th>Дата оформления</th>
+            {% for row in orders %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="main_item">
+        <table>
+            <h1>Заявки</h1>
+            <p><a href="{{ url_for('requests_user') }}" >Посмотреть полную информацию о заявках</a></p>
+            <p><a href="{{ url_for('create_request') }}">Добавить товары в заявку</a></p>
+            <th>ID Заявки</th><th>Оформитель</th><th>ID транзакции</th><th>Дата оформления</th>
+            {% for row in requests %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="main_item">
+        <table>
+            <h1>Возвраты за брак</h1>
+            <p><a href="{{ url_for('defectives_user') }}" >Посмотреть полную информацию о браках</a></p>
+            <p><a href="{{ url_for('create_defect') }}" >Оформить заявку на брак</a></p>
+            <th>ID Заявки</th><th>Оформитель</th><th>ID транзакции</th><th>ID прошлой транзакции</th><th>Дата оформления</th><th>Tип прошлой операции</th>
+
+            {% for row in defects %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+    <div class="main_item">
+        <table>
+            <h1>Транзакции</h1>
+
+            <th>ID Транзакции</th><th>Характер операции</th><th>Полная стоймость</th>
+            {% for row in transaction %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p><a href="{{ url_for('profile_user') }}" >Вернуться в профиль</a></p>
+
+     <table>
+            <h1>Ассортимент товаров</h1>
+
+            <th>Наименование</th><th>Тип</th><th>Название поставщика</th><th>Наличие гарантии</th>
+            <th>Доступное кол-во для заказа</th><th>Доступное кол-во для заявки</th><th>Цена</th>
+            {% for row in products %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+{% endblock %}

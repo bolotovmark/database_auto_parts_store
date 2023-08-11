@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main">
+    <p><a href="{{ url_for('profile_user') }}" >Вернуться к профилю</a></p>
+</div>
+<div class="main">
+    <div class="main_item">
+        <h1>Добавить товар в заявку</h1>
+        <form method="post">
+            <p> <b>ID заявки: </b> <input type="text" name="id_request"
+                       placeholder="add ID заяки"
+                       value="{{ request.form['id_request'] }}">
+            <p> <b>ID товара: </b> <input type="text" name="id_product"
+                       placeholder="add ID товара"
+                       value="{{ request.form['id_product'] }}">
+            <p> <b>Кол-во товара: </b> <input type="text" name="count"
+                       placeholder="count"
+                       value="{{ request.form['count'] }}">
+            <p> <button type="submit" name="action" value="VALUE2">Добавить товар</button>
+        </form>
+         <table>
+            <h1>Заявки</h1>
+            <p><a href="{{ url_for('requests_user') }}" >Посмотреть полную информацию о заявках</a></p>
+            <form method="post">
+
+                <p> <button type="submit" name="action" value="VALUE1">Создать новую корзину заявки</button>
+            </form>
+            <p></p>
+            <th>ID Заявки</th><th>Оформитель</th><th>ID транзакции</th><th>Дата оформления</th>
+            {% for row in requests %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="main_item">
+        <table>
+            <h1>Ассортимент</h1>
+
+            <th>ID Товара</th><th>Наименование детали</th>
+            <th>Тип детали</th><th>Поставщик</th><th>Наличие гарантии</th>
+            <th>Доступное кол-во</th><th>Цена</th>
+            {% for row in products %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

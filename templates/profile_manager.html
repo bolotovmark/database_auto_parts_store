@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>{% block title %} Profile {% endblock %}</h1>
+        {% for row in manager %}
+            <p><b>Login: </b>{{ row[0] }}</p>
+            <form method="post">
+            <p> <b>First Name: </b>{{ row[1] }} <input type="text" name="first"
+                       placeholder="change first name"
+                       value="{{ request.form['first'] }}">
+            <p> <b>Last Name: </b>{{ row[2] }} <input type="text" name="last"
+                       placeholder="change last name"
+                       value="{{ request.form['last'] }}">
+            <p> <button type="submit">Сохранить изменения</button>
+        </form>
+        {% endfor %}
+
+        <p><a href="{{ url_for('logout') }}" >Logout</a></p>
+
+    <div class="main">
+        <div class="main_item">
+            <h1>Поставки</h1>
+        </div>
+        <div class="main_item">
+            <h1>Статистика</h1>
+            <div class="main">
+            <div class="main_item">
+                    <form method="post">
+                        <p> <button type="submit" name="action" value="1">Топ по заказам</button>
+                        <p> <button type="submit" name="action" value="2">Топ по заявкам</button>
+                        <p> <button type="submit" name="action" value="3">Общий топ</button>
+                    </form>
+            </div>
+            <div class="main_item">
+                <h2>{{ current }}</h2>
+                    <table>
+                        <th>Наименование товара</th><th>Поставщик</th><th>Кол-во проданного</th>
+                        {% for row in stat %}
+                            <tr>
+                                {% for column in row %}
+                                    <td>{{ column }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

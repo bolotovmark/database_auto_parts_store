@@ -1,0 +1,39 @@
+TABLE {
+    width: 300px;
+    border-collapse: collapse;
+}
+
+TD, TH {
+    padding: 3px;
+    border: 1px solid black;
+}
+
+TH {
+    background: #b0e0e6;
+}
+
+.alert {
+    padding: 20px;
+    margin: 5px;
+    color: #970020;
+    background-color: #ffd5de;
+}
+
+.success {
+    padding: 20px;
+    margin: 5px;
+    color: #1f1b1c;
+    background-color: #7ae74e;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.main_item {
+    padding: 10px;
+    margin-right: 5px;
+}
+

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main">
+    <p><a href="{{ url_for('profile_user') }}" >Вернуться к профилю</a></p>
+</div>
+<div class="main">
+    <div class="main_item">
+        <h2>Создать заявку на брак</h2>
+        <form method="post">
+            <p> <b>ID прошлой транзакции: </b> <input type="text" name="id_past"
+                       placeholder="add ID транзакции"
+                       value="{{ request.form['id_past'] }}">
+            <p> <button type="submit" name="action" value="3">Cоздать заявку на брак</button>
+        </form>
+        <p></p>
+        <h2>Добавить купленный товар в заявку брака</h2>
+        <form method="post">
+            <p> <b>ID Заявки на брак: </b> <input type="text" name="id_defect"
+                       placeholder="add ID Заявки на брак"
+                       value="{{ request.form['id_defect'] }}">
+             <p> <b>ID Купленного товара: </b> <input type="text" name="id_product"
+                       placeholder="add ID Купленного товара"
+                       value="{{ request.form['id_product'] }}">
+             <p> <b>Количество: </b> <input type="text" name="count"
+                       placeholder="введите количество"
+                       value="{{ request.form['count'] }}">
+            <p> <button type="submit" name="action" value="4">Добавить дефектный товар</button>
+        </form>
+        <p></p>
+        <h2>Заявки на брак</h2>
+        <a href="{{ url_for('defectives_user') }}" >Информация о браке</a>
+        <table>
+        <th>ID Заявки</th><th>Оформитель</th><th>ID транзакции</th><th>ID прошлой транзакции</th><th>Дата оформления</th><th>Tип прошлой операции</th>
+
+            {% for row in defects %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <p></p>
+        <table>
+            <h2>Транзакции</h2>
+
+            <th>ID Транзакции</th><th>Характер операции</th><th>Полная стоймость</th>
+            {% for row in transaction %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="main_item">
+        <h2>Фильтр</h2>
+        <form method="post">
+            <p> <button type="submit" name="action" value="1">Показать информацию по заказам</button>
+            <p> <button type="submit" name="action" value="2">Показать информацию по заявкам</button>
+        </form>
+        <h1>{{ current }}</h1>
+        {% set count = namespace(a=-1) %}
+        <div>
+        {% for row in info %}
+            {% if count.a == row[0] %}
+                <tr><td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td>
+                <td>{{ row[8] }}</td></tr>
+            {% else %}
+                </div>
+                </table>
+                {% set count.a = row[0] %}
+                <p></p>
+                <hr align="center" size="4" color="#ff0000" />
+                <div>
+                <h2>ID Заказа: {{ row[0] }}</h2> <h2>Полная стоймость: {{ row[9] }}</h2>
+                <table>
+                <th>ID Товара</th><th>Наименование детали</th><th>Тип детали</th><th>Поставщик</th><th>Наличие гарантии</th>
+                <th>Цена (шт.)</th><th>Кол-во в заказе</th><th>Цена * Кол-во</th>
+                <tr><td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td>
+                <td>{{ row[8] }}</td></tr>
+            {% endif %}
+        {% endfor %}
+            </div>
+    </div>
+</div>
+{% endblock %}
